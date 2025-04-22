@@ -1,0 +1,36 @@
+# .github/workflows/ci-cd.yml
+name: CI/CD Demo
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔄 Checkout Code
+        uses: actions/checkout@v3
+
+      - name: 🧱 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: 📦 Install Dependencies
+        run: npm install
+
+      - name: 🧪 Run Basic Test (opsional)
+        run: echo "No tests yet"
+
+      - name: 🚀 Deploy to VPS via SCP
+        env:
+          HOST: ${{ secrets.VPS_HOST }}
+          USERNAME: ${{ secrets.VPS_USER }}
+          KEY: ${{ secrets.VPS_KEY }}
+        run: |
+          echo "$KEY" > key.pem
+          chmod 600 key.pem
+          scp -i key.pem -r * $USERNAME@$HOST:~/myapp
+          ssh -i key.pem $USERNAME@$HOST 'cd ~/myapp && npm install && pm2 restart app || pm2 start app.js'
