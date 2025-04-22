@@ -32,5 +32,6 @@ jobs:
         run: |
           echo "$KEY" > key.pem
           chmod 600 key.pem
+          ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts
           scp -i key.pem -r * $USERNAME@$HOST:~/myapp
           ssh -i key.pem $USERNAME@$HOST 'cd ~/myapp && npm install && pm2 restart app || pm2 start app.js'
