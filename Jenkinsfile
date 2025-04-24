@@ -35,7 +35,6 @@ pipeline {
             pm2 restart app
           else
             echo "▶️ Menjalankan aplikasi pertama kali..."
-            pm2 delete app || true
             pm2 start app.js --name app
           fi
 
