@@ -2,25 +2,44 @@ pipeline {
   agent any
 
   environment {
-    REMOTE_USER = 'root'
-    REMOTE_HOST = '103.74.5.88'
     APP_DIR = '/root/myapp'
   }
 
   stages {
-    stage('Clone Repo') {
+    stage('Checkout') {
       steps {
-        echo 'Repo cloned automatically by Jenkins from GitHub'
+        echo '✅ Source code otomatis di-clone oleh Jenkins dari GitHub.'
       }
     }
 
-    stage('Deploy to VPS') {
+    stage('Deploy to Local VPS') {
       steps {
         sh '''
-        echo "Deploying app to VPS..."
-        ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST "mkdir -p $APP_DIR"
-        scp -r * $REMOTE_USER@$REMOTE_HOST:$APP_DIR
-        ssh $REMOTE_USER@$REMOTE_HOST "cd $APP_DIR && npm install && pm2 restart app || pm2 start app.js"
+          echo "🚀 Mulai proses deploy ke VPS lokal..."
+
+          # Buat folder aplikasi (jika belum ada)
+          mkdir -p $APP_DIR
+
+          # Copy semua file ke direktori aplikasi
+          cp -r * $APP_DIR
+
+          # Pindah ke direktori aplikasi
+          cd $APP_DIR
+
+          # Install dependency Node.js
+          npm install
+
+          # Jalankan atau restart aplikasi pakai PM2
+          if pm2 list | grep -q "app"; then
+            echo "🔁 Restart aplikasi..."
+            pm2 restart app
+          else
+            echo "▶️ Menjalankan aplikasi pertama kali..."
+            pm2 start app.js --name app
+          fi
+
+          # Simpan konfigurasi PM2 agar survive reboot
+          pm2 save
         '''
       }
     }
