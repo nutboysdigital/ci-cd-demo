@@ -37,7 +37,6 @@ pipeline {
             echo "▶️ Menjalankan aplikasi pertama kali..."
             pm2 delete app || true
             pm2 start app.js --name app
-            pm2 save
           fi
 
           # Simpan konfigurasi PM2 agar survive reboot
