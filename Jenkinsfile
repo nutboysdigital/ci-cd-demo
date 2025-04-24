@@ -3,7 +3,7 @@ pipeline {
 
   environment {
     REMOTE_USER = 'root'
-    REMOTE_HOST = 'http://103.74.5.88/'
+    REMOTE_HOST = '103.74.5.88'
     APP_DIR = '/root/myapp'
   }
 
