@@ -12,6 +12,20 @@ pipeline {
       }
     }
 
+    stage('Install Dependencies') {
+      steps {
+        echo '📦 Menjalankan npm install'
+        sh 'npm install'
+      }
+    }
+
+    stage('Test') {
+      steps {
+        echo '🧪 Menjalankan Unit Test'
+        sh 'npm test'
+      }
+    }
+
     stage('Deploy to Local VPS') {
       steps {
         sh '''
