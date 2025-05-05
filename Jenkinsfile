@@ -12,6 +12,16 @@ pipeline {
       }
     }
 
+    stage('Install ESLint v8') {
+      steps {
+        echo '📦 Install ESLint versi 8...'
+        sh '''
+          npm uninstall eslint || true
+          npm install eslint@8 --save-dev
+        '''
+      }
+    }
+
     stage('Lint & Static Analysis') {
       steps {
         echo '🔍 Menjalankan ESLint....'
