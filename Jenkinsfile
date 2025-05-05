@@ -14,7 +14,7 @@ pipeline {
 
     stage('Lint & Static Analysis') {
       steps {
-        echo '🔍 Menjalankan ESLint...'
+        echo '🔍 Menjalankan ESLint....'
         sh 'npx eslint . || exit 1'
       }
     }
