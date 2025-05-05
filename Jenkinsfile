@@ -18,7 +18,10 @@ pipeline {
     stage('Secret Detection') {
       steps {
         echo '🔒 Memeriksa secret leakage...'
-        sh 'gitleaks detect --source . --no-banner || exit 1'
+        sh '''
+          export PATH=$PATH:/usr/local/bin
+          gitleaks detect --source . --no-banner || exit 1
+        '''
       }
     }
 
