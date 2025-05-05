@@ -1,17 +1,14 @@
 pipeline {
   agent any
+  environment {
+    APP_DIR = "/home/jenkins/myapp"
+  }
   stages {
+
     stage('Checkout') {
       steps {
         echo '📥 Cloning source code...'
         checkout scm
-      }
-    }
-
-    stage('Fix Permissions') {
-      steps {
-        echo '🛠 Menyesuaikan permission folder workspace...'
-        sh 'sudo chown -R jenkins:jenkins .'
       }
     }
 
@@ -22,26 +19,13 @@ pipeline {
       }
     }
 
-    // stage('Secret Detection') {
-    //   steps {
-    //     echo '🔒 Memeriksa secret leakage...'
-    //     sh '''
-    //       export PATH=$PATH:/usr/local/bin
-    //       gitleaks detect --source . --no-banner || exit 1
-    //     '''
-    //   }
-    // }
-
-    // stage('Dependency Scan') {
-    //   steps {
-    //     echo '🧪 Memeriksa vulnerability dependency...'
-    //     sh 'trivy fs . || exit 1'
-    //   }
-    // }
-
     stage('Install Dependencies') {
       steps {
-        sh 'npm install --unsafe-perm=true'
+        echo '📦 Install dependencies...'
+        sh '''
+          rm -rf node_modules  # Hindari permission error sisa install sebelumnya
+          npm install --unsafe-perm=true
+        '''
       }
     }
 
@@ -49,10 +33,17 @@ pipeline {
       steps {
         echo '🚀 Deploy ke VPS lokal...'
         sh '''
-          mkdir -p /home/jenkins/myapp
-          cp -r Jenkinsfile app.js package*.json public /home/jenkins/myapp
-          cd /home/jenkins/myapp
-          npm install
+          mkdir -p $APP_DIR
+
+          # Copy project ke direktori tujuan
+          cp -r Jenkinsfile app.js package*.json public $APP_DIR
+
+          # Pindah ke folder dan pastikan permission aman
+          cd $APP_DIR
+          rm -rf node_modules
+          npm install --unsafe-perm=true
+
+          # Jalankan ulang aplikasi
           pm2 delete app || true
           pm2 start app.js --name app
           pm2 save
