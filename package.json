@@ -10,7 +10,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "lodash": "^4.17.11"
   },
   "devDependencies": {
     "@eslint/js": "^9.26.0",
