@@ -3,6 +3,8 @@ const path = require('path');
 const app = express();
 const port = 3000;
 
+const apiKey = "sk_live_1234567890abcdef";
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/about', (req, res) => {

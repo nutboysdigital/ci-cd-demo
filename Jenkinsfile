@@ -1,58 +1,51 @@
 pipeline {
   agent any
-
-  environment {
-    APP_DIR = '/home/jenkins/myapp'
-  }
-
   stages {
     stage('Checkout') {
       steps {
-        echo '✅ Source code otomatis di-clone oleh Jenkins dari GitHub.'
+        echo '📥 Cloning source code...'
+        checkout scm
       }
     }
 
-    stage('Install Dependencies') {
+    stage('Lint & Static Analysis') {
       steps {
-        echo '📦 Menjalankan npm install'
+        echo '🔍 Menjalankan ESLint...'
+        sh 'npx eslint . || exit 1'
+      }
+    }
+
+    stage('Secret Detection') {
+      steps {
+        echo '🔒 Memeriksa secret leakage...'
+        sh 'gitleaks detect --source . --no-banner || exit 1'
+      }
+    }
+
+    stage('Dependency Scan') {
+      steps {
+        echo '🧪 Memeriksa vulnerability dependency...'
+        sh 'trivy fs . || exit 1'
+      }
+    }
+
+    stage('Install & Build') {
+      steps {
+        echo '📦 Install dependencies...'
         sh 'npm install'
-      }
-    }
-
-    stage('Test') {
-      steps {
-        echo '🧪 Menjalankan Unit Test'
-        sh 'npm test'
       }
     }
 
     stage('Deploy to Local VPS') {
       steps {
+        echo '🚀 Deploy ke VPS lokal...'
         sh '''
-          echo "🚀 Mulai proses deploy ke VPS lokal..."
-
-          # Buat folder aplikasi (jika belum ada)
-          mkdir -p $APP_DIR
-
-          # Copy semua file ke direktori aplikasi
-          cp -r * $APP_DIR
-
-          # Pindah ke direktori aplikasi
-          cd $APP_DIR
-
-          # Install dependency Node.js
+          mkdir -p /home/jenkins/myapp
+          cp -r Jenkinsfile app.js package*.json public /home/jenkins/myapp
+          cd /home/jenkins/myapp
           npm install
-
-          # Jalankan atau restart aplikasi pakai PM2
-          if pm2 list | grep -q "app"; then
-            echo "🔁 Restart aplikasi..."
-            pm2 restart app
-          else
-            echo "▶️ Menjalankan aplikasi pertama kali..."
-            pm2 start app.js --name app
-          fi
-
-          # Simpan konfigurasi PM2 agar survive reboot
+          pm2 delete app || true
+          pm2 start app.js --name app
           pm2 save
         '''
       }
