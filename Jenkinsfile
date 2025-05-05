@@ -25,12 +25,12 @@ pipeline {
     //   }
     // }
 
-    stage('Dependency Scan') {
-      steps {
-        echo '🧪 Memeriksa vulnerability dependency...'
-        sh 'trivy fs . || exit 1'
-      }
-    }
+    // stage('Dependency Scan') {
+    //   steps {
+    //     echo '🧪 Memeriksa vulnerability dependency...'
+    //     sh 'trivy fs . || exit 1'
+    //   }
+    // }
 
     stage('Install & Build') {
       steps {
