@@ -1,7 +1,3 @@
-/* eslint-disable no-unused-vars */
-const apiKey = "sk_live_1234567890abcdefgh";
-/* eslint-enable no-unused-vars */
-
 const express = require('express');
 const path = require('path');
 const app = express();
