@@ -8,6 +8,13 @@ pipeline {
       }
     }
 
+    stage('Fix Permissions') {
+      steps {
+        echo '🛠 Menyesuaikan permission folder workspace...'
+        sh 'sudo chown -R jenkins:jenkins .'
+      }
+    }
+
     stage('Lint & Static Analysis') {
       steps {
         echo '🔍 Menjalankan ESLint...'
@@ -32,10 +39,9 @@ pipeline {
     //   }
     // }
 
-    stage('Install & Build') {
+    stage('Install Dependencies') {
       steps {
-        echo '📦 Install dependencies...'
-        sh 'npm install'
+        sh 'npm install --unsafe-perm=true'
       }
     }
 
