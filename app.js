@@ -9,6 +9,6 @@ app.get('/about', (req, res) => {
   res.send('<h2>About Page - This is manually deployed</h2>');
 });
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+app.listen(3000, '0.0.0.0', () => {
+  console.log("App running on port 3000");
 });
