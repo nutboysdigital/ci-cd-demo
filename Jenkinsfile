@@ -12,6 +12,19 @@ pipeline {
       }
     }
 
+    stage('SonarQube Analysis') {
+      steps {
+        withSonarQubeEnv('SonarQube') {
+          sh 'npm install' // jika belum di-install
+          sh 'npx sonar-scanner \
+            -Dsonar.projectKey=myapp \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=http://localhost:9000 \
+            -Dsonar.login=squ_262480c99ae72ed3daf2c0dbd8cb28f5c42c31be'
+        }
+      }
+    }
+
     stage('Install ESLint v8') {
       steps {
         echo '📦 Install ESLint versi 8...'
