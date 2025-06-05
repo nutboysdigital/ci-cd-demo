@@ -14,17 +14,22 @@ pipeline {
 
     stage('SonarQube Analysis') {
       steps {
-        withSonarQubeEnv('SonarQube') {
-          sh 'npm install' // jika belum di-install
-          sh 'npx sonar-scanner \
-            -Dsonar.projectKey=myapp \
-            -Dsonar.sources=. \
-            -Dsonar.exclusions=myapp-chart/**/* \
-            -Dsonar.host.url=http://localhost:9000 \
-            -Dsonar.login=${SONAR_TOKEN}'
+        withCredentials([string(credentialsId: 'SONARQUBE_TOKEN', variable: 'SONARQUBE_TOKEN')]) {
+          withSonarQubeEnv('SonarQube') {
+            sh 'npm install'
+            sh '''
+              npx sonar-scanner \
+                -Dsonar.projectKey=myapp \
+                -Dsonar.sources=. \
+                -Dsonar.exclusions=myapp-chart/**/* \
+                -Dsonar.host.url=http://localhost:9000 \
+                -Dsonar.login=$SONARQUBE_TOKEN
+            '''
+          }
         }
       }
     }
+
 
     stage('Install ESLint v8') {
       steps {
