@@ -19,8 +19,9 @@ pipeline {
           sh 'npx sonar-scanner \
             -Dsonar.projectKey=myapp \
             -Dsonar.sources=. \
+            -Dsonar.exclusions=myapp-chart/**/* \
             -Dsonar.host.url=http://localhost:9000 \
-            -Dsonar.login=squ_262480c99ae72ed3daf2c0dbd8cb28f5c42c31be'
+            -Dsonar.login=${SONAR_TOKEN}'
         }
       }
     }
