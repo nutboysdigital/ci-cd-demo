@@ -14,17 +14,16 @@ pipeline {
 
     stage('SonarQube Analysis') {
       steps {
-        withCredentials([string(credentialsId: 'SONARQUBE_TOKEN', variable: 'SONARQUBE_TOKEN')]) {
+        withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONARQUBE_TOKEN')]) {
           withSonarQubeEnv('SonarQube') {
             sh 'npm install'
-            sh '''
+            sh """
               npx sonar-scanner \
                 -Dsonar.projectKey=myapp \
                 -Dsonar.sources=. \
                 -Dsonar.exclusions=myapp-chart/**/* \
-                -Dsonar.host.url=http://localhost:9000 \
-                -Dsonar.login=$SONARQUBE_TOKEN
-            '''
+                -Dsonar.login=${SONARQUBE_TOKEN}
+            """
           }
         }
       }
